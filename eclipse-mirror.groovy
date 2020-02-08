@@ -6,10 +6,10 @@ pipeline {
         dest = 'file:///$WORKSPACE/tmp/$repoName/'
 
     }
-    // parameters {
-    // string(name: 'SOURCE', defaultValue: '--//--//--//--', description: 'Eclipse repository url')
-    // string(name: 'repoName', defaultValue: 'release', description: 'Desirable path of mirror after URL')
-    // }
+    parameters {
+    string(name: 'SOURCE', defaultValue: '--//--//--//--', description: 'Eclipse repository url')
+    string(name: 'repoName', defaultValue: 'release', description: 'Desirable path of mirror after URL')
+    }
     stages {
         stage('download and extract eclipse') {
             steps {
