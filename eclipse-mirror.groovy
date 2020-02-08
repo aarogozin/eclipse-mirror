@@ -8,7 +8,7 @@ pipeline {
     }
 
     // basic parameters
-    // TO DO : add parameters with credentials in jenkinsfile 
+    // TO DO : add parameters with secrets in jenkinsfile 
     parameters {
         string(name: 'source', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
         string(name: 'repoName', defaultValue: 'nebula/releases/2.1.0', description: 'Desirable path of mirror after URL')
