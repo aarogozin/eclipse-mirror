@@ -9,6 +9,7 @@ pipeline {
     parameters {
     string(name: 'SOURCE', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
     string(name: 'repoName', defaultValue: 'pipline/test/2.1.0', description: 'Desirable path of mirror after URL')
+    string(name: 'sitePath', defaultValue: '/data/update-sites/mirrors', description: 'path to server mirror store directory')
     }
     stages {
         // TO DO : add check if eclipse exist
@@ -43,7 +44,7 @@ pipeline {
                 usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh """
                     ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
-                    $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+                    $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/$sitePath
                     rm -rf $WORKSPACE/tmp/*
                     """
                     }
