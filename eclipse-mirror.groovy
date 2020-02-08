@@ -19,7 +19,7 @@ pipeline {
         //       rm -rf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz
         //       """
         //     }
-        }
+        // }
         stage('download repository') {
             steps ('download mirror') {
                 script {
