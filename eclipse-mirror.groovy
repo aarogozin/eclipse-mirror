@@ -8,7 +8,7 @@ pipeline {
     }
     parameters {
     string(name: 'SOURCE', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
-    string(name: 'repoName', defaultValue: 'nebula/2.1.0', description: 'Desirable path of mirror after URL')
+    string(name: 'repoName', defaultValue: 'nebula/test/2.1.0', description: 'Desirable path of mirror after URL')
     }
     stages {
         // stage('download and extract eclipse') {
@@ -39,11 +39,12 @@ pipeline {
                 script {
                 withCredentials([
                 usernamePassword(credentialsId: "server16", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
-              ]) 
+]) {
                     sh """
                     ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
                     sshpass -p \"{$PASSWORD}" rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
                     """
+                    }
                 }
             }
         }
