@@ -1,13 +1,15 @@
 pipeline { 
+    agent any
+    
     environment {
-        eclipseLocation = $WORKSPACE/eclipse/eclipse
-        dest = file:///$WORKSPACE/tmp/$repoName/
+        eclipseLocation = '$WORKSPACE/eclipse/eclipse'
+        dest = 'file:///$WORKSPACE/tmp/$repoName/'
 
     }
-    parameters {
-    string(name: 'SOURCE', defaultValue: '--//--//--//--', description: 'Eclipse repository url')
-    string(name: 'repoName', defaultValue: 'release', description: 'Desirable path of mirror after URL')
-    }
+    // parameters {
+    // string(name: 'SOURCE', defaultValue: '--//--//--//--', description: 'Eclipse repository url')
+    // string(name: 'repoName', defaultValue: 'release', description: 'Desirable path of mirror after URL')
+    // }
     stages {
         stage('download and extract eclipse') {
             steps {
@@ -26,7 +28,7 @@ pipeline {
             }
         }
         stage ('push repository') {
-            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'server16', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
+            withCredentials([[credentialsId:'server16', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
             environment {
                 DEST_SERVER = credentials('server16-ip')
             }
