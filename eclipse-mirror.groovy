@@ -13,9 +13,11 @@ pipeline {
     stages {
         stage('download and extract eclipse') {
             steps {
+              sh """ 
               wget https://download.springsource.com/release/ECLIPSE/2019-09/eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
               tar xf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
               rm -rf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz
+              """
             }
         }
         stage('download repository') {
@@ -23,8 +25,10 @@ pipeline {
                 DEST_SERVER = credentials('server16-ip')
             }
             steps ('download mirror') {
+                sh """
                 $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source $SOURCE -destination $dest
                 $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source $SOURCE -destination $dest
+                """
             }
         }
         stage ('push repository') {
@@ -32,8 +36,10 @@ pipeline {
             environment {
                 DEST_SERVER = credentials('server16-ip')
             }
+            sh """
             ssh-keyscan $server >> ~/.ssh/known_hosts
             sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+            """
         }
     }
 }
