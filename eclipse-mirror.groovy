@@ -36,10 +36,12 @@ pipeline {
             environment {
                 DEST_SERVER = credentials('server16-ip')
             }
+            steps ('Upload repository to server') {
             sh """
             ssh-keyscan $server >> ~/.ssh/known_hosts
             sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
             """
+            }
         }
     }
 }
