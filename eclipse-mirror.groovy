@@ -6,11 +6,13 @@ pipeline {
         dest = 'file:///$WORKSPACE/tmp/$repoName/'
 
     }
+    
     parameters {
         string(name: 'source', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
         string(name: 'repoName', defaultValue: 'pipline/test/2.1.0', description: 'Desirable path of mirror after URL')
         string(name: 'sitePath', defaultValue: '/data/update-sites/mirrors/', description: 'path to server mirror store directory')
     }
+    
     stages {
         // TO DO : add check if eclipse exist
         stage('download and extract eclipse') {
@@ -22,6 +24,7 @@ pipeline {
               """
             }
         }
+        
         stage('download repository') {
             steps ('download mirror') {
                 script {
@@ -32,8 +35,8 @@ pipeline {
                 }
             }
         }
+        
         stage ('push repository') {
-            
             environment {
                 destServer = credentials('serverIp')
             }
@@ -41,12 +44,13 @@ pipeline {
             steps ('Upload repository to server') {
                 script {
                 withCredentials([
-                usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh """
-                    ssh-keyscan $destServer >> ~/.ssh/known_hosts
-                    $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$destServer:$sitePath
-                    rm -rf $WORKSPACE/tmp/*
-                    """
+                    usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
+                ]) {
+                        sh """
+                        ssh-keyscan $destServer >> ~/.ssh/known_hosts
+                        $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$destServer:$sitePath
+                        rm -rf $WORKSPACE/tmp/*
+                        """
                     }
                 }
             }
