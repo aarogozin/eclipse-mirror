@@ -34,14 +34,13 @@ pipeline {
         stage ('push repository') {
             
             environment {
-                DEST_SERVER = credentials('server16-ip')
+                DEST_SERVER = credentials('serverIp')
             }
             // TO DO : better use sshagent and rsa keys insted of password and sshpass
             steps ('Upload repository to server') {
                 script {
                 withCredentials([
-                usernamePassword(credentialsId: "server16", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
-]) {
+                usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh """
                     ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
                     $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
