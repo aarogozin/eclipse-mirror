@@ -19,7 +19,7 @@ pipeline {
     stages {
         // TO DO : add check if eclipse exist
 
-        stage('download and extract eclipse') {
+        stage('Download and extract eclipse') {
             steps {
               sh """ 
               wget https://download.springsource.com/release/ECLIPSE/2019-09/eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('download repository') {
+        stage('Download repository') {
             steps ('download mirror') {
                 script {
                     sh """
@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage ('push repository') {
+        stage ('Push repository') {
             // set server ip from credentials
             environment {
                 destServer = credentials('serverIp')
