@@ -42,7 +42,7 @@ pipeline {
 ]) {
                     sh """
                     ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
-                    sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+                    ~/sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
                     """
                     }
                 }
