@@ -32,11 +32,12 @@ pipeline {
             }
         }
         stage ('push repository') {
-            withCredentials([[credentialsId:'server16', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
+            
             environment {
                 DEST_SERVER = credentials('server16-ip')
             }
             steps ('Upload repository to server') {
+                withCredentials([[credentialsId:'server16', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
             sh """
             ssh-keyscan $server >> ~/.ssh/known_hosts
             sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
