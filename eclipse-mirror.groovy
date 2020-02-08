@@ -11,15 +11,16 @@ pipeline {
     string(name: 'repoName', defaultValue: 'pipline/test/2.1.0', description: 'Desirable path of mirror after URL')
     }
     stages {
-        // stage('download and extract eclipse') {
-        //     steps {
-        //       sh """ 
-        //       wget https://download.springsource.com/release/ECLIPSE/2019-09/eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
-        //       tar xf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
-        //       rm -rf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz
-        //       """
-        //     }
-        // }
+        // TO DO : add check if eclipse exist
+        stage('download and extract eclipse') {
+            steps {
+              sh """ 
+              wget https://download.springsource.com/release/ECLIPSE/2019-09/eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
+              tar xf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz 
+              rm -rf eclipse-java-2019-09-R-linux-gtk-x86_64.tar.gz
+              """
+            }
+        }
         stage('download repository') {
             steps ('download mirror') {
                 script {
@@ -35,6 +36,7 @@ pipeline {
             environment {
                 DEST_SERVER = credentials('server16-ip')
             }
+            // TO DO : better use sshagent and rsa keys insted of password and sshpass
             steps ('Upload repository to server') {
                 script {
                 withCredentials([
