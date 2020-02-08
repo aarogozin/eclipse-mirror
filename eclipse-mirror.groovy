@@ -41,8 +41,8 @@ pipeline {
                 usernamePassword(credentialsId: "server16", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
               ]) 
                     sh """
-                    ssh-keyscan $server >> ~/.ssh/known_hosts
-                    sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+                    ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
+                    sshpass -p \"{$PASSWORD}" rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
                     """
                 }
             }
