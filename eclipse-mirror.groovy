@@ -1,15 +1,14 @@
 pipeline { 
     agent any
-    // set eclipse locating and temp folder for repository
 
+    // set eclipse locating and temp folder for repository
     environment {
         eclipseLocation = '$WORKSPACE/eclipse/eclipse'
         dest = 'file:///$WORKSPACE/tmp/$repoName/'
-
     }
+
     // basic parameters
     // TO DO : add parameters with credentials in jenkinsfile 
-
     parameters {
         string(name: 'source', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
         string(name: 'repoName', defaultValue: 'nebula/releases/2.1.0', description: 'Desirable path of mirror after URL')
@@ -17,8 +16,7 @@ pipeline {
     }
 
     stages {
-    // TO DO : add check if eclipse exist
-
+        // TO DO : add check if eclipse exist
         stage('Download and extract eclipse') {
             steps {
               sh """ 
@@ -41,24 +39,26 @@ pipeline {
         }
 
         stage ('Push repository') {
-    // set server ip from credentials
+            // set server ip from credentials
             environment {
                 destServer = credentials('serverIp')
             }
-    // TO DO : better use sshagent and rsa keys insted of password and sshpass
+
+            // TO DO : better use sshagent and rsa keys insted of password and sshpass
             steps ('Upload repository to server') {
                 script {
-    // use credentials from parameters
-                withCredentials([
-                    usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-    // here I use hack (sshpass) to use password text from credentials stored in jenkins server
-    // also add server in ssh known_hosts, after copy remove everething in ssh folder
-                        sh """
-                        ssh-keyscan $destServer >> ~/.ssh/known_hosts
-                        $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$destServer:$sitePath
-                        rm -rf $WORKSPACE/tmp/*
-                        """
-                     }
+                    // use credentials from parameters
+                    withCredentials([
+                        usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
+                    ]) {
+                            // here I use hack (sshpass) to use password text from credentials stored in jenkins server
+                            // also add server in ssh known_hosts, after copy remove everething in ssh folder
+                            sh """
+                            ssh-keyscan $destServer >> ~/.ssh/known_hosts
+                            $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$destServer:$sitePath
+                            rm -rf $WORKSPACE/tmp/*
+                            """
+                        }
                 }
             }
         }
