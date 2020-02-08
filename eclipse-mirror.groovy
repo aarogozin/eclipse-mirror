@@ -7,7 +7,7 @@ pipeline {
         dest = 'file:///$WORKSPACE/tmp/$repoName/'
 
     }
-    basic parameters
+    // basic parameters
     // TO DO : add parameters with credentials in jenkinsfile 
 
     parameters {
