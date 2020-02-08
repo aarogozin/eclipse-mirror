@@ -8,7 +8,7 @@ pipeline {
     }
     parameters {
     string(name: 'SOURCE', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
-    string(name: 'repoName', defaultValue: 'nebula/2.1.0/', description: 'Desirable path of mirror after URL')
+    string(name: 'repoName', defaultValue: 'nebula/2.1.0', description: 'Desirable path of mirror after URL')
     }
     stages {
         // stage('download and extract eclipse') {
