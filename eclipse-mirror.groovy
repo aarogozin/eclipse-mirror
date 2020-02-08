@@ -21,14 +21,13 @@ pipeline {
             }
         }
         stage('download repository') {
-            environment {
-                DEST_SERVER = credentials('server16-ip')
-            }
             steps ('download mirror') {
-                sh """
-                $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source $SOURCE -destination $dest
-                $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source $SOURCE -destination $dest
-                """
+                script {
+                    sh """
+                    $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source $SOURCE -destination $dest
+                    $eclipseLocation -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source $SOURCE -destination $dest
+                    """
+                }
             }
         }
         stage ('push repository') {
@@ -37,11 +36,13 @@ pipeline {
                 DEST_SERVER = credentials('server16-ip')
             }
             steps ('Upload repository to server') {
+                script {
                 withCredentials([[credentialsId:'server16', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) 
-            sh """
-            ssh-keyscan $server >> ~/.ssh/known_hosts
-            sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
-            """
+                    sh """
+                    ssh-keyscan $server >> ~/.ssh/known_hosts
+                    sshpass -p $PASSWORD rsync -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+                    """
+                }
             }
         }
     }
