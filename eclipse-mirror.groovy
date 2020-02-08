@@ -4,12 +4,13 @@ pipeline {
     environment {
         eclipseLocation = '$WORKSPACE/eclipse/eclipse'
         dest = 'file:///$WORKSPACE/tmp/$repoName/'
-
     }
+    
     parameters {
-    string(name: 'SOURCE', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
-    string(name: 'repoName', defaultValue: 'pipline/test/2.1.0', description: 'Desirable path of mirror after URL')
+        string(name: 'SOURCE', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
+        string(name: 'repoName', defaultValue: 'pipline/test/2.1.0', description: 'Desirable path of mirror after URL')
     }
+    
     stages {
         // TO DO : add check if eclipse exist
         stage('download and extract eclipse') {
@@ -21,6 +22,7 @@ pipeline {
               """
             }
         }
+        
         stage('download repository') {
             steps ('download mirror') {
                 script {
@@ -31,21 +33,22 @@ pipeline {
                 }
             }
         }
+        
         stage ('push repository') {
-            
             environment {
-                DEST_SERVER = credentials('serverIp')
+                DEST_SERVER = credentials('server16-ip')
             }
             // TO DO : better use sshagent and rsa keys insted of password and sshpass
             steps ('Upload repository to server') {
                 script {
-                withCredentials([
-                usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh """
-                    ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
-                    $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
-                    rm -rf $WORKSPACE/tmp/*
-                    """
+                    withCredentials([
+                        usernamePassword(credentialsId: "server16", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
+                    ]) {
+                        sh """
+                        ssh-keyscan $DEST_SERVER >> ~/.ssh/known_hosts
+                        $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$DEST_SERVER:/data/update-sites/mirrors
+                        rm -rf $WORKSPACE/tmp/*
+                        """
                     }
                 }
             }
