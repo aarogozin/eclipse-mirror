@@ -13,6 +13,7 @@ pipeline {
         string(name: 'source', defaultValue: 'https://download.eclipse.org/nebula/releases/2.1.0/', description: 'Eclipse repository url')
         string(name: 'repoName', defaultValue: 'nebula/releases/2.1.0', description: 'Desirable path of mirror after URL')
         string(name: 'sitePath', defaultValue: '/data/update-sites/mirrors/', description: 'path to server mirror store directory')
+        string(name: 'sshUsername', defaultValue: 'optimax', description: 'ssh username')
     }
 
     stages {
@@ -45,21 +46,18 @@ pipeline {
             }
 
             // TO DO : better use sshagent and rsa keys insted of password and sshpass
-            steps ('Upload repository to server') {
+            steps ('Upload repository to server and clear tmp folder.') {
                 script {
                     // use credentials from parameters
-                    withCredentials([
-                        usernamePassword(credentialsId: "$usernamePassword", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
-                    ]) {
-                            // here I use hack (sshpass) to use password text from credentials stored in jenkins server
-                            // also add server in ssh known_hosts, after copy remove everething in ssh folder
-                            sh """
-                            ssh-keyscan $destServer >> ~/.ssh/known_hosts
-                            $JENKINS_HOME/bin/sshpass -p $PASSWORD scp -r  $WORKSPACE/tmp/* $USERNAME@$destServer:$sitePath
-                            rm -rf $WORKSPACE/tmp/*
-                            """
-                        }
-                }
+                    sshagent(credentials: ['p2-site-updates']) {
+            
+                        sh """
+                        ssh-keyscan $destServer >> ~/.ssh/known_hosts
+                        scp -r $WORKSPACE/tmp/* $sshUsername@$destServer:$sitePath
+                        rm -rf $WORKSPACE/tmp/*
+                        """
+                    }
+                }                
             }
         }
     }
